@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Build
+import android.view.MotionEvent
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import androidx.annotation.RequiresApi
@@ -12,11 +13,27 @@ import androidx.core.content.ContextCompat
 class Game(context: Context) : SurfaceView(context), SurfaceHolder.Callback  {
     private var surfaceHolder : SurfaceHolder = holder
     private var gameLoop= GameLoop(this, surfaceHolder)
+    private lateinit var player : Player
     init {
         holder.addCallback(this)
         gameLoop = GameLoop(this, surfaceHolder)
+        player = Player(context, 1000f, 500f, 30f)
     }
 
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event != null) {
+            if (event.action == MotionEvent.ACTION_DOWN)
+            {
+                player.setPosition( event.getX()  ,  event.getY())
+            }
+            else if (event.action == MotionEvent.ACTION_MOVE)
+            {
+                player.setPosition( event.getX()  ,  event.getY())
+            }
+        }
+
+        return super.onTouchEvent(event)
+    }
     override fun surfaceCreated(p0: SurfaceHolder) {
         gameLoop.startLoop()
     }
@@ -31,6 +48,7 @@ class Game(context: Context) : SurfaceView(context), SurfaceHolder.Callback  {
         super.draw(canvas)
         drawUPS(canvas)
         drawFPS(canvas)
+        player.draw(canvas)
     }
     public fun drawUPS(canvas: Canvas?){
         var averageUPS : String
@@ -56,5 +74,6 @@ class Game(context: Context) : SurfaceView(context), SurfaceHolder.Callback  {
     }
 
     fun update() {
+        player.update()
     }
 }
