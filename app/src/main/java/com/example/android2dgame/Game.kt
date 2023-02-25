@@ -15,11 +15,13 @@ class Game(context: Context) : SurfaceView(context), SurfaceHolder.Callback  {
     private var gameLoop= GameLoop(this, surfaceHolder)
     private lateinit var player : Player
     private lateinit var joystick : Joystick
+    private lateinit var enemy: Enemy
     init {
         holder.addCallback(this)
         gameLoop = GameLoop(this, surfaceHolder)
-        player = Player(context, 1000f, 500f, 30f)
         joystick = Joystick(275f, 700f,70f, 40f)
+        player = Player(context, joystick,1000f, 500f, 30f)
+        enemy = Enemy ()
 
     }
 
@@ -59,7 +61,7 @@ class Game(context: Context) : SurfaceView(context), SurfaceHolder.Callback  {
     override fun surfaceDestroyed(p0: SurfaceHolder) {
     }
 
-    override fun draw(canvas: Canvas?) {
+    override fun draw(canvas: Canvas) {
         super.draw(canvas)
         drawUPS(canvas)
         drawFPS(canvas)
@@ -90,7 +92,7 @@ class Game(context: Context) : SurfaceView(context), SurfaceHolder.Callback  {
     }
 
     fun update() {
-        player.update(joystick)
         joystick.update()
+        player.update()
     }
 }
