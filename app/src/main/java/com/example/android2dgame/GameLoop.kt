@@ -72,4 +72,6 @@ class GameLoop(game: Game, surfaceHolder: SurfaceHolder) : Thread(){
         }
     }
 
+    companion object
+
 }

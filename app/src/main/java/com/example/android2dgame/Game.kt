@@ -14,21 +14,36 @@ class Game(context: Context) : SurfaceView(context), SurfaceHolder.Callback  {
     private var surfaceHolder : SurfaceHolder = holder
     private var gameLoop= GameLoop(this, surfaceHolder)
     private lateinit var player : Player
+    private lateinit var joystick : Joystick
     init {
         holder.addCallback(this)
         gameLoop = GameLoop(this, surfaceHolder)
         player = Player(context, 1000f, 500f, 30f)
+        joystick = Joystick(275f, 700f,70f, 40f)
+
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event != null) {
             if (event.action == MotionEvent.ACTION_DOWN)
             {
-                player.setPosition( event.getX()  ,  event.getY())
+                if(joystick.isPressed(event.getX()  ,  event.getY())){
+                    joystick.setIsPressed(true)
+                }
+                return true
+                // player.setPosition( event.getX()  ,  event.getY())
             }
             else if (event.action == MotionEvent.ACTION_MOVE)
             {
-                player.setPosition( event.getX()  ,  event.getY())
+                if(joystick.getIsPressed()){
+                    joystick.setActuator(event.getX()  ,  event.getY())
+                }
+                return true
+            }
+            else if (event.action == MotionEvent.ACTION_UP){
+                joystick.setIsPressed(false)
+                joystick.resetActuator()
+                return true
             }
         }
 
@@ -49,6 +64,7 @@ class Game(context: Context) : SurfaceView(context), SurfaceHolder.Callback  {
         drawUPS(canvas)
         drawFPS(canvas)
         player.draw(canvas)
+        joystick.draw(canvas)
     }
     public fun drawUPS(canvas: Canvas?){
         var averageUPS : String
@@ -74,6 +90,7 @@ class Game(context: Context) : SurfaceView(context), SurfaceHolder.Callback  {
     }
 
     fun update() {
-        player.update()
+        player.update(joystick)
+        joystick.update()
     }
 }
